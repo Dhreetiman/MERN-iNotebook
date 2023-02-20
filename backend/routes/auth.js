@@ -4,6 +4,8 @@ let bcrypt = require("bcryptjs");
 let jwt = require('jsonwebtoken')
 const { body, validationResult } = require("express-validator");
 
+let auth = require('../middleware/auth')
+
 //======================< api for signup user >=========================//
 
 router.post(
@@ -93,6 +95,21 @@ router.post('/login',[
     });
 
 
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Something went wrong")
+  }
+})
+
+
+//======================< get user >===============================//
+
+router.get('/getuser',auth, async (req, res) => {
+  try {
+
+    let user = await User.findById(req.user.id).select("-password")
+    return res.json(user)
+    
   } catch (error) {
     console.log(error);
     return res.status(500).send("Something went wrong")
